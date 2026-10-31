@@ -1,0 +1,34 @@
+# Sketch2Shape AI configuration. Change values here, not in code.
+seed: 42
+image_size: 512            # sketch map and diffusion resolution
+
+generation:
+  base_model: "stable-diffusion-v1-5/stable-diffusion-v1-5"
+  controlnet: "lllyasviel/control_v11p_sd15_scribble"
+  steps: 25
+  guidance_scale: 7.5
+  sketch_strength: 1.0      # ControlNet conditioning scale. Higher = follows sketch more
+  default_prompt: "a single object"
+  prompt_suffix: ", centered, three-quarter view, plain white background, soft studio lighting, product photo, high detail"
+  negative_prompt: "multiple objects, text, watermark, cropped, clutter, blurry, low quality, background scene"
+  min_fidelity: 0.12        # below this, retry once with stronger sketch conditioning
+  retry_strength: 1.4
+
+prepare:
+  foreground_ratio: 0.85    # object fills this share of the frame for reconstruction
+
+reconstruct:
+  model: "triposr"          # triposr (safe baseline) | instantmesh (later upgrade)
+  triposr_repo: "stabilityai/TripoSR"
+  mc_resolution: 256        # marching-cubes resolution. Lower = faster, coarser
+  chunk_size: 8192          # lower this if you hit GPU out-of-memory
+
+mesh:
+  min_faces: 500
+  min_flatness_ratio: 0.08  # smallest bbox side / largest side. Below this = flat plane
+  max_file_mb: 50
+  keep_largest_component_share: 0.9
+
+paths:
+  outputs: "outputs"
+  weights: "weights"
